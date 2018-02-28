@@ -1,0 +1,7 @@
+venv
+.DS_Store
+.idea/
+/dist/
+*.iml
+.gradle
+/build

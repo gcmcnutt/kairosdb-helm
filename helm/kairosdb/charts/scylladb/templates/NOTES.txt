@@ -1,0 +1,3 @@
+- The broker is found by:
+
+  kubectl get svc --namespace {{ .Release.Namespace }} {{ template "scylladb.fullname" . }}

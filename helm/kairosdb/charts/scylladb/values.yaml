@@ -1,0 +1,47 @@
+# Default values for scylladb on minikube.
+
+replicaCount: 1
+
+config:
+  overprovisioned: 1
+  maxIORequests: 256
+  batchSizeWarnKb: 50
+  batchSizeFailKb: 70
+#  cpu: 1
+#  memory: 500M
+
+image:
+  repository: gcmcnutt/scylladb
+
+service:
+  cqlNativePort: 9042
+  thriftPort: 9160
+  internodePort: 7000
+  jmxPort: 7199
+  scyllaRestPort: 10000
+  prometheusPort: 9180
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious 
+  # choice for the user. This also increases chances charts run on environments with little 
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following 
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  #requests:
+  #  cpu: 500m
+  #  memory: 4Gi
+
+persistence:
+  ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+  ## Default: volume.alpha.kubernetes.io/storage-class: default
+  ##
+  # storageClass:
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+global:
+  image:
+    repositoryPrefix:
+    pullPolicy: IfNotPresent
+
