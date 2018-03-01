@@ -36,6 +36,7 @@ helm install -f helm/aws-dev.yaml ...
 - Need to use the Ec2Snitch or something so that rack is to the AZ
 - Verify that a pod shutdown command does graceful shutdown of scylladb (catch signal, etc)
 - Improve some config based on https://www.youtube.com/watch?v=Y-6qilMBr7A&amp=&t=0s&amp=&index=11
+- Evaluate inter-node compression settings
 
 ### kairos
 - maybe make kairos a stateful set so we can preserve the file queue
