@@ -42,8 +42,9 @@ helm install -f helm/aws-dev.yaml ...
 - maybe make kairos a stateful set so we can preserve the file queue
   - kairos queue directory is tmpfile and needs to be on a private volume
 - will want a kairosDB backlog alarm based on the file queue...
-- try to run float instead of double or long... - see the impact on throughput
 - how to control memory usage (it may need jvm container hint)
+- need to include https://github.com/kairosdb/kairos-healthcheck so we don't scan all metrics
+- we have a bugfix for don't query TTL > 10year -- need to understand why we need it?
 
 ### benchmark
 - scale the time scale so we can use ttl effectively on long running tests
