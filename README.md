@@ -33,18 +33,17 @@ helm install -f helm/aws-dev.yaml ...
 - Smarter sparse list for seed protocol (or just new a new provider)
 - There seems to be some root file system writes on scylladb during large ingest
 - **Intermittent**: A new cluster doesn't always seem to have all nodes join.  Feels like something with the dns entries not yet showing up...
+  - really what is needed here is kairos shouldn't interfere with scylla while the first nodes are joining
+  - workaround is --set replicaCount=0 to stop kairos from starting, first and then upgrade template with target replicaCount
 - Need to use the Ec2Snitch or something so that rack is to the AZ
-- Verify that a pod shutdown command does graceful shutdown of scylladb (catch signal, etc)
-- Improve some config based on https://www.youtube.com/watch?v=Y-6qilMBr7A&amp=&t=0s&amp=&index=11
+- Need pod shutdown command to do graceful shutdown of scylladb (catch signal, etc)
+- Evaluate inter-node compression settings
 
 ### kairos
-- maybe make kairos a stateful set so we can preserve the file queue
-  - kairos queue directory is tmpfile and needs to be on a private volume
-- will want a kairosDB backlog alarm based on the file queue...
-- try to run float instead of double or long... - see the impact on throughput
+- consider flipping to MemoryQueueProcessor (or make this a help option)
 - how to control memory usage (it may need jvm container hint)
+- need to include https://github.com/kairosdb/kairos-healthcheck so we don't scan all metrics
+- we have a bugfix for don't query TTL > 10year -- need to understand why we need it?
 
 ### benchmark
-- scale the time scale so we can use ttl effectively on long running tests
-- rethink rate control so we can govern throughput
 - create a read load

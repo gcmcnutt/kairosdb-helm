@@ -1,7 +1,7 @@
 FROM openjdk:8-jdk
 
 RUN	apt-get update
-RUN apt-get install -y wget dnsutils
+RUN apt-get install -y wget dnsutils sysstat net-tools
 
 RUN wget -qO /tmp/kairosdb-1.2.0-1.tar.gz \
     https://github.com/kairosdb/kairosdb/releases/download/v1.2.0/kairosdb-1.2.0-1.tar.gz
