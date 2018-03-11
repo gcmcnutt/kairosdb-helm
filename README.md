@@ -28,15 +28,14 @@ helm install -f helm/aws-dev.yaml ...
 ## TODO
 ### scylla
 - get rid of the start-scylla script -- do config map and injection instead
-- Fix the background tasks method of start -- maybe two containers...
+  - also ensure that the main process (group) can catch a SIGTERM for gracefull shutdown
+  - fix the background tasks method of start -- maybe two containers...
 - Add in liveness checks for health check
 - Smarter sparse list for seed protocol (or just new a new provider)
 - There seems to be some root file system writes on scylladb during large ingest
 - **Intermittent**: A new cluster doesn't always seem to have all nodes join.  Feels like something with the dns entries not yet showing up...
   - really what is needed here is kairos shouldn't interfere with scylla while the first nodes are joining
   - workaround is --set replicaCount=0 to stop kairos from starting, first and then upgrade template with target replicaCount
-- Need to use the Ec2Snitch or something so that rack is to the AZ
-- Need pod shutdown command to do graceful shutdown of scylladb (catch signal, etc)
 - Evaluate inter-node compression settings
 
 ### kairos

@@ -26,8 +26,7 @@ scylladb:
     overprovisioned: 0
     cpu: 16
     memory: 16G
-#   endpointSnitch: Ec2Snitch  TODO https://github.com/scylladb/scylla/issues/2980
-    endpointSnitch: RackInferringSnitch
+    endpointSnitch: Ec2Snitch
 
   replicaCount: 9
 

@@ -38,7 +38,8 @@ persistence:
   ##
   # storageClass:
   accessMode: ReadWriteOnce
-  size: 1Gi
+  # if set, a PVC will also be allocated
+  # size: 1Gi
 
 global:
   image:
