@@ -62,9 +62,11 @@ spec:
           - --endpoint-snitch
           - {{ .Values.config.endpointSnitch | quote }}
           {{- end }}
+{{- if .Values.persistence.size }}
         volumeMounts:
         - name: datadir
           mountPath: /var/lib/scylla
+{{- end }}
 #        livenessProbe:
 #          exec:
 #            command:
@@ -79,6 +81,7 @@ spec:
 #          timeoutSeconds: 5
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+{{- if .Values.persistence.size }}
   volumeClaimTemplates:
   - metadata:
       name: datadir
@@ -92,3 +95,4 @@ spec:
       {{- if .Values.persistence.storageClass }}
       storageClassName: {{ .Values.persistence.storageClass | quote }}
       {{- end }}
+{{- end }}
