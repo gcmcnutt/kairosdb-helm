@@ -6,16 +6,16 @@
 
 replicaCount: 3
 
+persistence:
+  size: 150Gi
+#  storageClass: io1
+
 scylladb:
   config:
     overprovisioned: 0
     cpu: 2
     memory: 2G
     endpointSnitch: Ec2Snitch
-
-  persistence:
-    size: 50Gi
-#    storageClass: io1
 
   resources:
     requests:

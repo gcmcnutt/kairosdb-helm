@@ -81,7 +81,6 @@ fi
 
 export SCYLLA_HOME SCYLLA_CONF
 
-# TODO running this and JMX in the background is probably not right -- pod won't terminate if scylla terminates for example...
 /usr/bin/scylla $@ --options-file /etc/scylla/scylla.yaml --listen-address $SCYLLA_LISTEN_ADDRESS --rpc-address $SCYLLA_LISTEN_ADDRESS --network-stack posix &
 
 source /etc/default/scylla-jmx

@@ -77,7 +77,7 @@ for loop in xrange(settings.QUERIES):
     # generate a simple grouping query across the sample area
 
     # pick a device/metric
-    metric = '%s-%d|%d' % (settings.METRIC_BASE, random.randint(1, settings.JOBS), random.randint(0, settings.METRICS - 1))
+    metric = '%s|%d' % (settings.METRIC_BASE, random.randint(0, settings.METRICS - 1))
 
     # pick a timerange (24 hour randomly distributed)
     base_time = long(random.choice(range(settings.WINDOW_BEGIN, settings.WINDOW_END - 1)))

@@ -6,7 +6,7 @@ replicaCount: 1
 scylladb:
   image:
     repository: gcmcnutt/scylladb
-    tag: v0.6.4
+    tag: v0.6.5
 
   config:
     overprovisioned: 1

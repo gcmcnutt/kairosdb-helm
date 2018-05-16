@@ -1,6 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
+  # TODO figure out why the DNS isn't following the doc and we have to name override here!
+  # (hint: if we have the service name different from stateful set name, things aren't working)
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
   name: {{ template "kairosdb.fullname" . }}-app
   labels:
     app: {{ template "kairosdb.name" . }}
