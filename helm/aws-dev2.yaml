@@ -21,7 +21,6 @@ service:
   type: LoadBalancer
   externalPort: 80
 
-
 scylladb:
   config:
     overprovisioned: 0
@@ -32,7 +31,7 @@ scylladb:
   replicaCount: 9
 
   persistence:
-    size: 4Ti
+    size: 12Ti
     storageClass: io1
 
   resources:

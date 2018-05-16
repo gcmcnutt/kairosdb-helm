@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "kairosdb.fullname" . }}
 data:
-  kairosdb.properties: |
+  kairosdb.properties.base: |
     kairosdb.telnetserver.port=4242
     kairosdb.telnetserver.address=0.0.0.0
     kairosdb.telnetserver.max_command_size=1024
@@ -76,13 +76,13 @@ data:
     #===============================================================================
     #Cassandra properties
     #host list is in the form> 1.1.1.1,1.1.1.2
-    kairosdb.datastore.cassandra.cql_host_list={{ template "scylladb.fullname" . }}
+    kairosdb.datastore.cassandra.cql_host_list=@@HOSTNAME@@
     kairosdb.datastore.cassandra.keyspace=kairosdb
 
     #Sets the replication for the keyspace.  This is only used the first time Kairos
     #starts up and needs to create the schema in Cassandra.  Later changes
     #to this property have no effect.
-    kairosdb.datastore.cassandra.replication={'class': 'SimpleStrategy','replication_factor' : {{ .Values.datastoreReplicationFactor | default "1" }}}
+    kairosdb.datastore.cassandra.replication={'class': 'SimpleStrategy','replication_factor' : {{ .Values.kairosdb.datastoreReplicationFactor | default "1" }}}
 
     #For a single metric query this dictates the number of simultaneous cql queries
     #to run (ie one for each partition key of data).  The larger the cluster the higher you may want
@@ -110,7 +110,7 @@ data:
     #Available settings are cassandra version dependent:
     #http://www.datastax.com/documentation/cassandra/2.0/webhelp/index.html#cassandra/dml/dml_config_consistency_c.html
     kairosdb.datastore.cassandra.read_consistency_level=ONE
-    kairosdb.datastore.cassandra.write_consistency_level=TWO
+    kairosdb.datastore.cassandra.write_consistency_level=QUORUM
 
     # Set this if this kairosdb node connects to cassandra nodes in multiple datacenters.
     # Not setting this will select cassandra hosts using the RoundRobinPolicy, while setting this will use DCAwareRoundRobinPolicy.
@@ -285,7 +285,7 @@ data:
 
     # Path to the file backed queue
     # Only applies to the FileQueueProcessor
-    kairosdb.queue_processor.queue_path=queue
+    kairosdb.queue_processor.queue_path=/data/queue
 
     # Page size of the file backed queue 50Mb
     # Only applies to the FileQueueProcessor

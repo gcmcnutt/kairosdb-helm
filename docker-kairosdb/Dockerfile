@@ -11,8 +11,9 @@ RUN mkdir -p /opt/ && \
     tar -xf /tmp/kairosdb*
 
 ADD logback.xml /opt/kairosdb/conf/logging/logback.xml
+ADD wrapper.sh /wrapper.sh
 
 # Kairos API telnet and jetty ports
 EXPOSE 4242 8080
 
-ENTRYPOINT ["/opt/kairosdb/bin/kairosdb.sh", "run"]
+ENTRYPOINT ["sh", "/wrapper.sh"]

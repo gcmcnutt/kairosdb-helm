@@ -41,10 +41,6 @@ iwritten = 0
 
 call_time = 0.0
 call_count = 0
-icall_time = 0.0
-icall_count = 0
-
-next_report = time.time() + settings.REPORT_INTERVAL
 
 logger.info(
     "start: base={} hours={} devices={} metrics={} volumes={} samples_per_hour={} metric_write_rate={} real_ttl_sec={} endpoint={}".format(
@@ -55,9 +51,9 @@ logger.info(
         settings.REAL_TTL_SEC,
         settings.KAIROS))
 
-rateLimiter = RateLimiter(itemRate = settings.METRIC_WRITE_RATE)
+rateLimiter = RateLimiter(itemRate = settings.METRIC_READ_RATE)
+next_report = time.time() + settings.REPORT_INTERVAL
 
-start_time = time.time() - settings.HOURS * 3600
 begin = time.time()
 ibegin = begin
 
@@ -93,8 +89,8 @@ for h in xrange(settings.HOURS):
 
                 iwritten = iwritten + settings.SAMPLES_PER_HOUR
 
-                # lastly should we sleep?
-                rateLimiter(settings.SAMPLES_PER_HOUR)
+            # lastly should we sleep?
+            rateLimiter(settings.SAMPLES_PER_HOUR * settings.METRICS)
 
             # should we log
             now = time.time()

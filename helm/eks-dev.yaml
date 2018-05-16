@@ -3,8 +3,24 @@
 #  image:
 #    repositoryPrefix: XXX.dkr.ecr.us-west-2.amazonaws.com
 #    pullPolicy: Always
+BROKE
 
 replicaCount: 3
+
+datastoreReplicationFactor: 3
+
+resources:
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+
+#annotations:
+#  service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+
+service:
+  type: LoadBalancer
+  externalPort: 80
+
 
 scylladb:
   config:
@@ -12,6 +28,8 @@ scylladb:
     cpu: 2
     memory: 2G
     endpointSnitch: Ec2Snitch
+
+  replicaCount: 6
 
   persistence:
     size: 50Gi
@@ -22,22 +40,3 @@ scylladb:
       cpu: 2000m
       memory: 2Gi
 
-kairosdb:
-
-  datastoreReplicationFactor: 3
-
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
-
-  service:
-    type: LoadBalancer
-    externalPort: 80
-
-  resources:
-    requests:
-      cpu: 1000m
-      memory: 1Gi
-
-global:
-  image:
-    pullPolicy: Always
