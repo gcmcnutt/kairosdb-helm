@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # usage
-# sh write-test.sh 3 http://plinking-pug-kairosdb-app greg1 24
+# sh write-test.sh 3 http://jazzy-jaguar-kairosdb-app greg1 24
 
 JOBS=$1
 KAIROS=$2
@@ -13,7 +13,7 @@ VOLUMES=50
 METRIC_WRITE_RATE=20000
 REAL_TTL_SEC=259200
 
-IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu13
+IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu14
 CONTEXT=cluster1.pstg-dev.net
 
 for i in $(seq 1 $JOBS)

@@ -16,11 +16,6 @@ spec:
         app: {{ template "kairosdb.name" . }}
         release: {{ .Release.Name }}
     spec:
-      volumes:
-      - name: configmap
-        configMap:
-          name: {{ template "kairosdb.fullname" . }}
-
       {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
@@ -112,15 +107,14 @@ spec:
           initialDelaySeconds: {{ .Values.kairosdb.service.initialDelaySeconds }}
           timeoutSeconds: {{ .Values.kairosdb.service.probeTimeoutSeconds }}
         env:
-        - name: MY_POD_NAME
+        - name: SEEDS
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        volumeMounts:
-        - name: configmap
-          mountPath: /opt/kairosdb/conf/kairosdb.properties.base
-          subPath: kairosdb.properties.base
+        - name: REPLICATION_FACTOR
+          value: {{ .Values.kairosdb.datastoreReplicationFactor | default "1" | quote }}
 {{- if .Values.persistence.size }}
+        volumeMounts:
         - name: datadir
           mountPath: /data
 {{- end }}

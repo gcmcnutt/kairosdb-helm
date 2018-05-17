@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # usage
-# sh read-test.sh 3 http://plinking-pug-kairosdb-app greg1 24
+# sh read-test.sh 3 http://jazzy-jaguar-kairosdb-app greg1 24
 
 JOBS=$1
 KAIROS=$2
@@ -12,7 +12,7 @@ DEVICES=100
 VOLUMES=50
 QUERIES=10000
 
-IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu13
+IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu14
 CONTEXT=cluster1.pstg-dev.net
 
 for i in $(seq 1 $JOBS)

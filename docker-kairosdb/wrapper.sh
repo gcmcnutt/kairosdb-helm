@@ -3,7 +3,8 @@
 # TODO need a better way to have kairos wait for scylladb
 sleep 15
 
-# TODO would be better as an init container
-sed -e "s/@@HOSTNAME@@/${MY_POD_NAME}/g" /opt/kairosdb/conf/kairosdb.properties.base > /opt/kairosdb/conf/kairosdb.properties
+sed -e "s/@@SEEDS@@/${SEEDS}/g" \
+    -e "s/@@REPLICATION_FACTOR@@/${REPLICATION_FACTOR}/g" \
+    /opt/kairosdb/conf/kairosdb.properties.base > /opt/kairosdb/conf/kairosdb.properties
 
 exec /opt/kairosdb/bin/kairosdb.sh run

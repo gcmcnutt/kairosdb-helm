@@ -1,25 +1,10 @@
-# aws configuration
-#global:
-#  image:
-#    repositoryPrefix: XXX.dkr.ecr.us-west-2.amazonaws.com
-#    pullPolicy: Always
-BROKE
+# aws large benchmark configuration
 
 replicaCount: 9
 
-datastoreReplicationFactor: 3
-
-resources:
-  requests:
-    cpu: 4000m
-    memory: 8Gi
-
-annotations:
-  service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
-
-service:
-  type: LoadBalancer
-  externalPort: 80
+persistence:
+  size: 12Ti
+  storageClass: io1
 
 scylladb:
   config:
@@ -28,13 +13,27 @@ scylladb:
     memory: 16G
     endpointSnitch: Ec2Snitch
 
-  replicaCount: 9
-
-  persistence:
-    size: 12Ti
-    storageClass: io1
-
   resources:
     requests:
       cpu: 16000m
       memory: 16Gi
+
+kairosdb:
+
+  datastoreReplicationFactor: 3
+
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+
+  service:
+    type: LoadBalancer
+    externalPort: 80
+
+  resources:
+    requests:
+      cpu: 4000m
+      memory: 8Gi
+
+global:
+  image:
+    pullPolicy: Always

@@ -1,8 +1,4 @@
 # aws configuration
-#global:
-#  image:
-#    repositoryPrefix: XXX.dkr.ecr.us-west-2.amazonaws.com
-#    pullPolicy: Always
 
 replicaCount: 3
 

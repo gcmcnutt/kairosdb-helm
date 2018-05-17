@@ -51,8 +51,9 @@ logger.info(
         settings.REAL_TTL_SEC,
         settings.KAIROS))
 
-rateLimiter = RateLimiter(itemRate = settings.METRIC_READ_RATE)
+rateLimiter = RateLimiter(itemRate = settings.METRIC_WRITE_RATE)
 next_report = time.time() + settings.REPORT_INTERVAL
+start_time = time.time() - settings.HOURS * 3600
 
 begin = time.time()
 ibegin = begin

@@ -6,7 +6,7 @@ replicaCount: 1
 scylladb:
   image:
     repository: gcmcnutt/scylladb
-    tag: v0.6.5
+    tag: v0.6.7
 
   config:
     overprovisioned: 1
@@ -32,7 +32,7 @@ scylladb:
 kairosdb:
   image:
     repository: gcmcnutt/kairosdb
-    tag: v0.6.4
+    tag: v0.6.7
 
   queueProcessorBatchSize: 10000
 
