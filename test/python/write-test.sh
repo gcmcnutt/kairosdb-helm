@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # usage
-# sh write-test.sh 3 http://tan-armadillo-kairosdb-app greg1 24
+# sh write-test.sh 3 http://jaundiced-grizzly-kairosdb-app greg1 24
 
 JOBS=$1
 KAIROS=$2

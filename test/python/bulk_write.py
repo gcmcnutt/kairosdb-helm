@@ -1,4 +1,9 @@
 # Generate predictable data at a rate
+
+# usage:
+# KAIROS=http://internal-ad9e3bdb15c7611e8a9910aa08f0fe8e-766401239.us-west-2.elb.amazonaws.com METRIC_BASE=g1 HOURS=4 DEVICES=1 METRICS=2 VOLUMES=2 python bulk_write.py
+
+
 import logging
 import json
 import settings

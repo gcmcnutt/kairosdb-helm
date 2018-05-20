@@ -5,8 +5,10 @@ replicaCount: 1
 
 scylladb:
   image:
-    repository: gcmcnutt/scylladb
-    tag: v0.7.1
+    repository: gcmcnutt/docker-scylladb
+
+    # TODO this should be provided by, say, gradle driver
+    tag: gmcnutt-0.8.1-SNAPSHOT
 
   config:
     overprovisioned: 1
@@ -31,8 +33,10 @@ scylladb:
 
 kairosdb:
   image:
-    repository: gcmcnutt/kairosdb
-    tag: float1
+    repository: gcmcnutt/docker-kairosdb
+
+    # TODO this should be provided by, say, gradle driver
+    tag: gmcnutt-0.8.1-SNAPSHOT
 
   queueProcessorBatchSize: 10000
 

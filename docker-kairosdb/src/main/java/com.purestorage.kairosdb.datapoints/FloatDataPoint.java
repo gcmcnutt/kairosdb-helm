@@ -49,11 +49,11 @@ public class FloatDataPoint extends DataPointHelper {
 
     @Override
     public boolean isDouble() {
-        return false;
+        return true;
     }
 
     @Override
     public double getDoubleValue() {
-        return 0;
+        return m_value;
     }
 }

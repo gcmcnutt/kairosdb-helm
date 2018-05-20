@@ -7,9 +7,10 @@ import org.kairosdb.core.datapoints.DataPointFactory;
 import java.io.DataInput;
 import java.io.IOException;
 
+import static org.kairosdb.core.DataPoint.GROUP_NUMBER;
+
 public class FloatDataPointFactory implements DataPointFactory {
     public static final String DST_FLOAT = "kairos_float";
-    public static final String GROUP_TYPE = "float";
 
     @Override
     public String getDataStoreType() {
@@ -18,7 +19,7 @@ public class FloatDataPointFactory implements DataPointFactory {
 
     @Override
     public String getGroupType() {
-        return GROUP_TYPE;
+        return GROUP_NUMBER;
     }
 
     @Override
