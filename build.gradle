@@ -1,0 +1,137 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import com.bmuschko.gradle.docker.tasks.image.DockerTagImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
+        classpath 'gradle.plugin.com.patdouble:gradle-aws-ecr-plugin:0.3.3'
+        classpath 'ch.netzwerg:gradle-release-plugin:1.2.5'
+    }
+}
+
+apply plugin: 'ch.netzwerg.release'
+
+rootProject.ext {
+    kairosdbVersion = '1.2.1-1'
+
+    version = rootProject.release.versionFile
+
+    if (project.hasProperty('imageTagOverride')) {
+        imageTag = project.imageTagOverride
+    } else {
+        imageTag = System.env.USER + '-' + rootProject.version
+    }
+}
+
+subprojects {
+    version = rootProject.version
+}
+
+configure([project(':docker-kairosdb')]) {
+    apply plugin: 'java'
+    apply plugin: 'com.patdouble.awsecr'
+    apply plugin: 'com.bmuschko.docker-remote-api'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    group = 'com.purestorage.kairosdb'
+    description = """Pure1 kairosdb extensions"""
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    // TODO clean the 'out' dir here
+
+    dependencies {
+        compile "org.kairosdb:kairosdb:$kairosdbVersion"
+    }
+
+    docker {
+        // TODO there may be a cleaner way to detect if we are in a minikube environment
+        if (System.env.DOCKER_HOST) {
+            url = System.env.DOCKER_HOST
+        }
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = file(System.env.DOCKER_CERT_PATH)
+        }
+
+        registryCredentials {
+            url = 'https://' + rootProject.awsRepo
+        }
+    }
+
+    task createDockerfile(type: Dockerfile) {
+        dependsOn build
+        group 'docker'
+        destFile = project.file('build/docker/Dockerfile')
+        from 'openjdk:8-jdk'
+        maintainer 'Greg McNutt "gmcnutt@purestorage.com"'
+
+        runCommand 'apt-get update'
+
+        // TODO something changed in upstream packages... (and kairos doesn't work in java9 yet)
+
+        runCommand 'apt-mark hold cron'
+        runCommand 'apt-get install -y wget dnsutils sysstat net-tools'
+        runCommand 'wget -qO /tmp/kairosdb-1.2.0-1.tar.gz https://github.com/kairosdb/kairosdb/releases/download/v1.2.0/kairosdb-1.2.0-1.tar.gz'
+        runCommand 'RUN mkdir -p /opt/ && cd /opt/ && tar -xf /tmp/kairosdb*'
+
+        addFile "$project.buildDir/resources/main/files/conf/logging/logback.xml", "/opt/kairosdb/conf/logging"
+        addFile "$project.buildDir/resources/main/resources/files/conf/kairosdb.properties.base", "/opt/kairosdb/conf"
+        addFile "$project.buildDir/resources/main/resources/files/bin/wrapper.sh", "/opt/kairosdb/bin"
+        addFile "$project.buildDir/resources/main/resources/files/conf/kairosdb.properties.base", "/opt/kairosdb/conf"
+
+        // our plugin
+        addFile jar.archivePath.toString(), '/opt/kairosdb/lib'
+
+        // telnet and jetty
+        exposePort(4242, 8080)
+
+        entryPoint('sh', '/opt/kairosdb/bin/wrapper.sh')
+    }
+
+    task dockerBuildImage(type: DockerBuildImage) {
+        dependsOn createDockerfile
+        group 'docker'
+        inputDir = createDockerfile.destFile.parentFile
+        tag = rootProject.name + '-' + project.name + ':' + rootProject.ext.imageTag
+    }
+
+    task ecrTag(type: DockerTagImage) {
+        description('tag image for ECR repository')
+        group('docker')
+        dependsOn dockerBuildImage
+
+        imageId = dockerBuildImage.tag
+        repository = rootProject.awsRepo + '/' + project.name
+        tag = rootProject.ext.imageTag
+    }
+
+    task publish(type: DockerPushImage) {
+        description('push a tagged image to remote repository')
+        group('docker')
+        dependsOn(ecrTag)
+
+        imageName = rootProject.awsRepo + '/' + project.name
+        tag = rootProject.ext.imageTag
+    }
+}
+
+release.dependsOn subprojects.publish

@@ -1,0 +1,5 @@
+rootProject.name = 'pstg-kairosdb'
+
+include ':docker-kairosdb'
+
+
