@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
 # usage
-# sh write-test.sh 3 http://jaundiced-grizzly-kairosdb-app greg1 24
+# sh write-test.sh 10 http://altered-oyster-kairosdb-app greg2 1000 1000 50
+# sh write-test.sh 1 http://altered-oyster-kairosdb-app greg1 4 100 50
+# sh write-test.sh 10 http://altered-oyster-kairosdb-app greg2 4 100 50
+# sh write-test.sh 100 http://altered-oyster-kairosdb-app greg3 1000 1000 50
 
 JOBS=$1
 KAIROS=$2
 NAME=$3
 HOURS=$4
+DEVICES=$5
+VOLUMES=$6
 
-DEVICES=100
-VOLUMES=50
 METRIC_WRITE_RATE=20000
 REAL_TTL_SEC=259200
 

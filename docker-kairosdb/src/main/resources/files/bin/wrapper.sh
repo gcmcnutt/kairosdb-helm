@@ -5,6 +5,7 @@ sleep 15
 
 sed -e "s/@@SEEDS@@/${SEEDS}/g" \
     -e "s/@@REPLICATION_FACTOR@@/${REPLICATION_FACTOR}/g" \
-    /opt/kairosdb/conf/kairosdb.properties.base > /opt/kairosdb/conf/kairosdb.properties
+    -e "s/@@DEFAULT_TTL@@/${DEFAULT_TTL}/g" \
+    /opt/kairosdb/templates/base.kairosdb.properties > /opt/kairosdb/conf/kairosdb.properties
 
 exec /opt/kairosdb/bin/kairosdb.sh run

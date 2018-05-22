@@ -22,6 +22,9 @@ kairosdb:
 
   datastoreReplicationFactor: 3
 
+  # 3 days for accelerated tests
+  defaultTtl: 259200
+
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
 

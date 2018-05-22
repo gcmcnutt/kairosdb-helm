@@ -113,6 +113,9 @@ spec:
               fieldPath: metadata.name
         - name: REPLICATION_FACTOR
           value: {{ .Values.kairosdb.datastoreReplicationFactor | default "1" | quote }}
+        - name: DEFAULT_TTL
+          value: {{ .Values.kairosdb.defaultTtl | default "3024000" | quote }}
+
 {{- if .Values.persistence.size }}
         volumeMounts:
         - name: datadir
