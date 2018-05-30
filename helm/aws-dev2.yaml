@@ -4,7 +4,7 @@ replicaCount: 9
 
 persistence:
   size: 12Ti
-  storageClass: io1
+  storageClass: io1-1
 
 scylladb:
   config:

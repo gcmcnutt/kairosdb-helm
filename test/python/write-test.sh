@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
 
 # usage
-# sh write-test.sh 10 http://altered-oyster-kairosdb-app greg2 1000 1000 50
-# sh write-test.sh 1 http://altered-oyster-kairosdb-app greg1 4 100 50
-# sh write-test.sh 10 http://altered-oyster-kairosdb-app greg2 4 100 50
-# sh write-test.sh 100 http://altered-oyster-kairosdb-app greg3 1000 1000 50
+# sh test/python/kubecwrite-test.sh 10 http://altered-oyster-kairosdb-app greg2 1000 1000 50
+# sh test/python/write-test.sh 1 http://altered-oyster-kairosdb-app greg1 4 100 50
+# sh test/python/write-test.sh 10 http://altered-oyster-kairosdb-app greg2 4 100 50
+# sh test/python/write-test.sh 100 http://bumptious-tiger-kairosdb-app greg2 1000 1000 50
+# sh test/python/write-test.sh 10 http://honking-sasquatch-kairosdb-app greg1 4 100 50
+# sh test/python/write-test.sh 20 http://honking-sasquatch-kairosdb-1.honking-sasquatch-kairosdb.gmcnutt.svc.cluster.local:8080 greg6 4 100 50
+# sh test/python/write-test.sh 20 http://honking-sasquatch-kairosdb-app greg7 4 100 50
+
+# sh test/python/write-test.sh 10 http://illocutionary-ragdoll-kairosdb-app greg1 4 100 50
+# sh test/python/write-test.sh 100 http://illocutionary-ragdoll-kairosdb-app greg2 1000 1000 50
+# sh test/python/write-test.sh 100 http://internal-a029bf3c5609f11e8a92c067563aff83-527735186.us-west-2.elb.amazonaws.com greg2 1000 1000 50
+# sh test/python/write-test.sh 50 http://virulent-olm-kairosdb-app greg2 100 1000 50
+
 
 JOBS=$1
 KAIROS=$2
@@ -17,7 +26,6 @@ METRIC_WRITE_RATE=20000
 REAL_TTL_SEC=259200
 
 IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu16
-#CONTEXT=cluster2.pstg-dev.net
 
 for i in $(seq 1 $JOBS)
 do
