@@ -3,8 +3,8 @@
 replicaCount: 9
 
 persistence:
-  size: 12Ti
-  storageClass: io1-1
+  size: 3Ti
+  storageClass: io1
 
 scylladb:
   config:
@@ -22,8 +22,9 @@ kairosdb:
 
   datastoreReplicationFactor: 3
 
-  # 3 days for accelerated tests
-  defaultTtl: 259200
+  queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
+  defaultTtl: "259200"
+  memoryQueueSize: "100000000"
 
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'

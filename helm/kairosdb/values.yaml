@@ -8,13 +8,15 @@ scylladb:
     repository: gcmcnutt/docker-scylladb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.1-SNAPSHOT
+    tag: gmcnutt-0.8.3-SNAPSHOT
 
   config:
     overprovisioned: 1
     maxIORequests: 256
     batchSizeWarnKb: 50
     batchSizeFailKb: 70
+    blockedReactorNotifyMs: 7000
+    writeRequestTimeoutMs: 7000
 #    cpu: 1
 #    memory: 500M
 
@@ -36,9 +38,14 @@ kairosdb:
     repository: gcmcnutt/docker-kairosdb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.1-SNAPSHOT
+    tag: gmcnutt-0.8.3-SNAPSHOT
 
-  queueProcessorBatchSize: 10000
+    datastoreReplicationFactor: 1
+
+    # quote these... https://github.com/kubernetes/helm/blob/master/docs/chart_best_practices/values.md
+    memoryQueueSize: "200000"
+    defaultTtl: "3024000"
+    queueProcessor: org.kairosdb.core.queue.FileQueueProcessor
 
   service:
     name: kairosdb

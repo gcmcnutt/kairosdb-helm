@@ -21,6 +21,15 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 
+#      TODO throw in an init pod for **leader only** that does this:
+#      root@wobbling-cat-kairosdb-0:/# cqlsh wobbling-cat-kairosdb-0
+#      Connected to wobbling-cat-kairosdb at wobbling-cat-kairosdb-0:9042.
+#      [cqlsh 5.0.1 | Cassandra 3.0.8 | CQL spec 3.3.1 | Native protocol v4]
+#      Use HELP for help.
+#      cqlsh> use kairosdb;
+#      cqlsh:kairosdb> alter table data_points with compaction = { 'class': 'LeveledCompactionStrategy'} AND gc_grace_seconds=3600;
+#      cqlsh:kairosdb> alter table row_key_index with compaction = { 'class': 'LeveledCompactionStrategy'} AND gc_grace_seconds=3600;
+
       containers:
       - name: scylladb
         image: {{ template "kairosdb.scyllaImageId" . }}
@@ -67,6 +76,14 @@ spec:
           - --endpoint-snitch
           - {{ .Values.scylladb.config.endpointSnitch | quote }}
           {{- end }}
+          {{- if .Values.scylladb.config.writeRequestTimeoutMs | quote }}
+          - --write-request-timeout-in-ms
+          - {{ .Values.scylladb.config.writeRequestTimeoutMs | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.blockedReactorNotifyMs | quote }}
+          - --blocked-reactor-notify-ms
+          - {{ .Values.scylladb.config.blockedReactorNotifyMs | quote }}
+          {{- end }}
         {{- if .Values.persistence.size }}
         volumeMounts:
         - name: datadir
@@ -112,15 +129,14 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: REPLICATION_FACTOR
-          value: {{ .Values.kairosdb.datastoreReplicationFactor | default "1" | quote }}
+          value: {{ .Values.kairosdb.datastoreReplicationFactor | quote }}
+        - name: MEMORY_QUEUE_SIZE
+          value: {{ .Values.kairosdb.memoryQueueSize | quote }}
         - name: DEFAULT_TTL
-          value: {{ .Values.kairosdb.defaultTtl | default "3024000" | quote }}
+          value: {{ .Values.kairosdb.defaultTtl | quote }}
+        - name: QUEUE_PROCESSOR
+          value: {{ .Values.kairosdb.queueProcessor }}
 
-{{- if .Values.persistence.size }}
-        volumeMounts:
-        - name: datadir
-          mountPath: /data
-{{- end }}
         resources:
 {{ toYaml .Values.kairosdb.resources | indent 10 }}
 

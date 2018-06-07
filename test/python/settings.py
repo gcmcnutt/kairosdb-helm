@@ -18,6 +18,5 @@ REPORT_INTERVAL = 15
 
 # read values
 METRIC_READ_RATE = float(os.getenv('METRIC_READ_RATE', '1.0'))
-WINDOW_END = int(os.getenv('WINDOW_END', str(int(time.time() * 1000))))
-WINDOW_BEGIN = int(os.getenv('WINDOW_BEGIN', str(WINDOW_END - 86400000)))
 QUERIES = int(os.getenv('QUERIES', '1000'))
+TTL = int(os.getenv('TTL', '86400'))

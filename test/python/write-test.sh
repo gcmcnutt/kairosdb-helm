@@ -14,6 +14,8 @@
 # sh test/python/write-test.sh 100 http://internal-a029bf3c5609f11e8a92c067563aff83-527735186.us-west-2.elb.amazonaws.com greg2 1000 1000 50
 # sh test/python/write-test.sh 50 http://virulent-olm-kairosdb-app greg2 100 1000 50
 
+# sh test/python/write-test.sh 1 http://melting-mite-kairosdb-app greg1 4 100 50
+# sh test/python/write-test.sh 10 http://rousing-mole-kairosdb-app greg2 40 1000 50
 
 JOBS=$1
 KAIROS=$2

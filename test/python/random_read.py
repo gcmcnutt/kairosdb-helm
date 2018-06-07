@@ -56,18 +56,16 @@ call_count = 0
 icall_count = 0
 
 logger.info(
-    "start: base={} devices={} metrics={} volumes={} samples_per_hour={} metric_read_rate={} window_begin={} window_end={} endpoint={}".format(
+    "start: base={} devices={} metrics={} volumes={} samples_per_hour={} ttl={} metric_read_rate={} endpoint={}".format(
         settings.METRIC_BASE,
         settings.DEVICES, settings.METRICS, settings.VOLUMES,
         settings.SAMPLES_PER_HOUR,
+        settings.TTL,
         settings.METRIC_READ_RATE,
-        settings.WINDOW_BEGIN,
-        settings.WINDOW_END,
         settings.KAIROS))
 
 rateLimiter = RateLimiter(itemRate = settings.METRIC_READ_RATE)
 
-start_time = time.time() - settings.HOURS * 3600
 next_report = time.time() + settings.REPORT_INTERVAL
 begin = time.time()
 ibegin = begin
@@ -79,14 +77,14 @@ for loop in xrange(settings.QUERIES):
     # pick a device/metric
     metric = '%s|%d' % (settings.METRIC_BASE, random.randint(0, settings.METRICS - 1))
 
-    # pick a timerange (24 hour randomly distributed)
-    base_time = long(random.choice(range(settings.WINDOW_BEGIN, settings.WINDOW_END - 1)))
-    end_time = base_time + 86400000
+    # look
+    end_time = time.time() * 1000
+    base_time = end_time - (settings.TTL * 1000 * 3)
 
     # pick a random volume
-    rand_vol = random.randint(0, settings.VOLUMES - 1)
+    rand_device = random.randint(0, settings.DEVICES - 1)
 
-    query_params = "query: metric={} volume={} start={}".format(metric, rand_vol, base_time)
+    query_params = "query: metric={} device={} start={}".format(metric, rand_device, base_time)
 
     # standard grouping
     # standard aggregators
@@ -101,7 +99,7 @@ for loop in xrange(settings.QUERIES):
                     {
                         "name": "avg",
                         "sampling": {
-                            "value": 1,
+                            "value": 5,
                             "unit": "minutes"
                         }
                     }
@@ -109,11 +107,11 @@ for loop in xrange(settings.QUERIES):
                 "group_by": [
                     {
                         "name": "tag",
-                        "tags": ["device"]
+                        "tags": ["volume"]
                     }
                 ],
                 "tags": {
-                    "volume": rand_vol
+                    "device": rand_device
                 }
             }
         ]
@@ -143,10 +141,10 @@ for loop in xrange(settings.QUERIES):
         iread_items = iread_items + items_returned
         read_items = read_items + items_returned
 
-        logger.info("query={} items_returned={}".format(query_params, items_returned))
+        logger.info("loop={} query={} items_returned={}".format(loop, query_params, items_returned))
 
     except Exception:
-        logger.exception("query={}, response={}".format(query_params, response.text))
+        logger.exception("query={}, response={}".format(query_params, '' if response is None else str(response.text)))
         exceptions = exceptions + 1
 
     call_count = call_count + 1

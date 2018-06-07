@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 
 # usage
-# sh read-test.sh 3 http://jazzy-jaguar-kairosdb-app greg1 24
+# sh test/python/read-test.sh 1 http://rousing-mole-kairosdb-app greg2 86400 1000 50
+# sh test/python/read-test.sh 10 http://rousing-mole-kairosdb-app greg2 86400 1000 50
 
 JOBS=$1
 KAIROS=$2
 NAME=$3
-HOURS=$4
+TTL=$4
+DEVICES=$5
+VOLUMES=$6
 
-DEVICES=100
-VOLUMES=50
 QUERIES=10000
 
-IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu14
-CONTEXT=cluster1.pstg-dev.net
+IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu17
+CONTEXT=cluster2.pstg-dev.net
 
 for i in $(seq 1 $JOBS)
 do
@@ -24,5 +25,5 @@ do
     --restart=Never \
     --labels=group=$NAME-r,agent=$i \
     --requests=cpu=100m,memory=50Mi \
-    run $run-r -- sh -c "KAIROS=$KAIROS QUERIES=$QUERIES METRIC_BASE=$run HOURS=$HOURS DEVICES=$DEVICES VOLUMES=$VOLUMES python random_read.py"
+    run $run-r -- sh -c "KAIROS=$KAIROS QUERIES=$QUERIES METRIC_BASE=$run TTL=$TTL DEVICES=$DEVICES VOLUMES=$VOLUMES python random_read.py"
 done
