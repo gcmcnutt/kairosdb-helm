@@ -8,7 +8,7 @@ scylladb:
     repository: gcmcnutt/docker-scylladb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.3-SNAPSHOT
+    tag: gmcnutt-0.8.4-SNAPSHOT
 
   config:
     overprovisioned: 1
@@ -38,14 +38,15 @@ kairosdb:
     repository: gcmcnutt/docker-kairosdb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.3-SNAPSHOT
+    tag: gmcnutt-0.8.4-SNAPSHOT
 
-    datastoreReplicationFactor: 1
-
-    # quote these... https://github.com/kubernetes/helm/blob/master/docs/chart_best_practices/values.md
-    memoryQueueSize: "200000"
-    defaultTtl: "3024000"
-    queueProcessor: org.kairosdb.core.queue.FileQueueProcessor
+#    datastoreReplicationFactor: 1
+#
+#    # quote these... https://github.com/kubernetes/helm/blob/master/docs/chart_best_practices/values.md
+#    memoryQueueSize: "200000"
+#    defaultTtl: "3024000"
+#    queueProcessor: org.kairosdb.core.queue.FileQueueProcessor
+#    queryThreads: 20
 
   service:
     name: kairosdb

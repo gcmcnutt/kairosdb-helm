@@ -2,7 +2,7 @@
 
 # usage
 # sh test/python/read-test.sh 1 http://rousing-mole-kairosdb-app greg2 86400 1000 50
-# sh test/python/read-test.sh 10 http://rousing-mole-kairosdb-app greg2 86400 1000 50
+# sh test/python/read-test.sh 10 http://mottled-goat-kairosdb-app greg2 86400 1000 50
 
 JOBS=$1
 KAIROS=$2

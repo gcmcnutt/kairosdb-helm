@@ -15,7 +15,7 @@
 # sh test/python/write-test.sh 50 http://virulent-olm-kairosdb-app greg2 100 1000 50
 
 # sh test/python/write-test.sh 1 http://melting-mite-kairosdb-app greg1 4 100 50
-# sh test/python/write-test.sh 10 http://rousing-mole-kairosdb-app greg2 40 1000 50
+# sh test/python/write-test.sh 10 http://mottled-goat-kairosdb-app greg2 40 1000 50
 
 JOBS=$1
 KAIROS=$2
