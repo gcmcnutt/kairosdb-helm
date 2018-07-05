@@ -1,0 +1,158 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{ template "kairosdb.fullname" . }}
+  labels:
+    app: {{ template "kairosdb.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  serviceName: {{ template "kairosdb.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "kairosdb.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+
+#      TODO throw in an init pod for **leader only** that does this:
+#      root@wobbling-cat-kairosdb-0:/# cqlsh wobbling-cat-kairosdb-0
+#      Connected to wobbling-cat-kairosdb at wobbling-cat-kairosdb-0:9042.
+#      [cqlsh 5.0.1 | Cassandra 3.0.8 | CQL spec 3.3.1 | Native protocol v4]
+#      Use HELP for help.
+#      cqlsh> use kairosdb;
+#      cqlsh:kairosdb> alter table data_points with compaction = { 'class': 'LeveledCompactionStrategy'} AND gc_grace_seconds=3600;
+#      cqlsh:kairosdb> alter table row_key_index with compaction = { 'class': 'LeveledCompactionStrategy'} AND gc_grace_seconds=3600;
+
+      containers:
+      - name: scylladb
+        image: {{ template "kairosdb.scyllaImageId" . }}
+        imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.scylladb.service.cqlNativePort }}
+          - containerPort: {{ .Values.scylladb.service.thriftPort }}
+          - containerPort: {{ .Values.scylladb.service.internodePort }}
+          - containerPort: {{ .Values.scylladb.service.jmxPort }}
+          - containerPort: {{ .Values.scylladb.service.scyllaRestPort }}
+          - containerPort: {{ .Values.scylladb.service.prometheusPort }}
+        env:
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MY_STATEFULSET_NAME
+          value: {{ template "kairosdb.fullname" . }}
+        args:
+          - --cluster-name
+          - {{ template "kairosdb.fullname" . }}
+          - --max-io-requests
+          - {{ .Values.scylladb.config.maxIORequests | quote }}
+          {{- if .Values.scylladb.config.batchSizeWarnKb }}
+          - --batch-size-warn-threshold-in-kb
+          - {{ .Values.scylladb.config.batchSizeWarnKb | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.batchSizeFailKb }}
+          - --batch-size-fail-threshold-in-kb
+          - {{ .Values.scylladb.config.batchSizeFailKb | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.overprovisioned }}
+          - --overprovisioned
+          {{- end }}
+          {{- if .Values.scylladb.config.cpu }}
+          - --smp
+          - {{ .Values.scylladb.config.cpu | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.memory }}
+          - --memory
+          - {{ .Values.scylladb.config.memory | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.endpointSnitch }}
+          - --endpoint-snitch
+          - {{ .Values.scylladb.config.endpointSnitch | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.writeRequestTimeoutMs | quote }}
+          - --write-request-timeout-in-ms
+          - {{ .Values.scylladb.config.writeRequestTimeoutMs | quote }}
+          {{- end }}
+          {{- if .Values.scylladb.config.blockedReactorNotifyMs | quote }}
+          - --blocked-reactor-notify-ms
+          - {{ .Values.scylladb.config.blockedReactorNotifyMs | quote }}
+          {{- end }}
+        {{- if .Values.persistence.size }}
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/scylla
+        {{- end }}
+        livenessProbe:
+          exec:
+            command:
+              - nodetool
+              - status
+          initialDelaySeconds: {{ .Values.scylladb.service.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.scylladb.service.probeTimeoutSeconds }}
+        readinessProbe:
+          exec:
+            command:
+              - nodetool
+              - status
+          initialDelaySeconds: {{ .Values.scylladb.service.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.scylladb.service.probeTimeoutSeconds }}
+        resources:
+{{ toYaml .Values.scylladb.resources | indent 10 }}
+
+      - name: kairosdb
+        image: {{ template "kairosdb.kairosImageId" . }}
+        imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+        ports:
+          - containerPort: {{ .Values.kairosdb.service.internalPort }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.kairosdb.service.internalPort }}
+          initialDelaySeconds: {{ .Values.kairosdb.service.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.kairosdb.service.probeTimeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.kairosdb.service.internalPort }}
+          initialDelaySeconds: {{ .Values.kairosdb.service.initialDelaySeconds }}
+          timeoutSeconds: {{ .Values.kairosdb.service.probeTimeoutSeconds }}
+        env:
+        - name: SEEDS
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: REPLICATION_FACTOR
+          value: {{ .Values.kairosdb.datastoreReplicationFactor | default "1" | quote }}
+        - name: MEMORY_QUEUE_SIZE
+          value: {{ .Values.kairosdb.memoryQueueSize | default "200000" | quote }}
+        - name: DEFAULT_TTL
+          value: {{ .Values.kairosdb.defaultTtl | default "3024000" | quote }}
+        - name: QUEUE_PROCESSOR
+          value: {{ .Values.kairosdb.queueProcessor | default "org.kairosdb.core.queue.FileQueueProcessor" }}
+        - name: QUERY_THREADS
+          value: {{ .Values.kairosdb.queryThreads | default "20" | quote }}
+        resources:
+{{ toYaml .Values.kairosdb.resources | indent 10 }}
+
+{{- if .Values.persistence.size }}
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+      annotations:
+    spec:
+      accessModes:
+        - {{ .Values.persistence.accessMode | quote }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.size | quote }}
+      {{- if .Values.persistence.storageClass }}
+      storageClassName: {{ .Values.persistence.storageClass | quote }}
+      {{- end }}
+{{- end }}

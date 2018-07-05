@@ -1,30 +1,30 @@
-# aws configuration
+# aws large benchmark configuration
 
-replicaCount: 3
+replicaCount: 9
 
 persistence:
-  size: 750Gi
+  size: 3Ti
   storageClass: io1
 
 scylladb:
   config:
     overprovisioned: 0
-    cpu: 4
-    memory: 4G
+    cpu: 16
+    memory: 16G
     endpointSnitch: Ec2Snitch
 
   resources:
     requests:
-      cpu: 4000m
-      memory: 4Gi
+      cpu: 16000m
+      memory: 16Gi
 
 kairosdb:
 
   datastoreReplicationFactor: 3
 
   queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
-  defaultTtl: "86400"
-  memoryQueueSize: "1000000"
+  defaultTtl: "259200"
+  memoryQueueSize: "100000000"
 
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
@@ -35,8 +35,8 @@ kairosdb:
 
   resources:
     requests:
-      cpu: 2000m
-      memory: 2Gi
+      cpu: 4000m
+      memory: 8Gi
 
 global:
   image:

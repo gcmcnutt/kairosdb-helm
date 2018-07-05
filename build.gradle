@@ -1,0 +1,201 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
+        classpath 'ch.netzwerg:gradle-release-plugin:1.2.5'
+    }
+}
+
+apply plugin: 'ch.netzwerg.release'
+
+rootProject.ext {
+    kairosdbVersion = '1.2.1-1'
+    scylladbVersion = '2.1'
+
+    version = rootProject.release.versionFile
+
+    if (project.hasProperty('imageTagOverride')) {
+        imageTag = project.imageTagOverride
+    } else {
+        imageTag = System.env.USER + '-' + rootProject.version
+    }
+}
+
+subprojects {
+    version = rootProject.version
+}
+
+configure([project(':docker-kairosdb')]) {
+    apply plugin: 'java'
+    apply plugin: 'com.bmuschko.docker-remote-api'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    group = 'com.purestorage.kairosdb'
+    description = """Pure1 kairosdb extensions"""
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    // TODO clean the 'out' dir here
+
+    dependencies {
+        compile "org.kairosdb:kairosdb:$kairosdbVersion"
+    }
+
+    docker {
+        // TODO there may be a cleaner way to detect if we are in a minikube environment
+        if (System.env.DOCKER_HOST) {
+            url = System.env.DOCKER_HOST
+        }
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = file(System.env.DOCKER_CERT_PATH)
+        }
+
+        registryCredentials {
+            // TODO need to get this working
+            email = project.hasProperty('dockerHubEmail') ? project.property('dockerHubEmail') : null
+        }
+    }
+
+    task createDockerfile(type: Dockerfile) {
+        dependsOn build
+        group 'docker'
+        destFile = project.file('build/docker/Dockerfile')
+        outputs.upToDateWhen { false }
+
+        from 'openjdk:8-jdk'
+        maintainer 'Greg McNutt "gmcnutt@purestorage.com"'
+
+        runCommand 'apt-get update'
+
+        // TODO something changed in upstream packages... (and kairos doesn't work in java9 yet)
+        runCommand 'apt-mark hold cron'
+
+        runCommand 'apt-get install -y wget dnsutils sysstat net-tools'
+        runCommand 'wget -qO /tmp/kairosdb-1.2.1-1.tar.gz https://github.com/gcmcnutt/kairosdb/releases/download/pstg-v1.2.1-1/kairosdb-1.2.1-1.tar.gz'
+        runCommand 'mkdir -p /opt/ && cd /opt/ && tar -xf /tmp/kairosdb*'
+
+        addFile 'resources/main/files', '/opt/kairosdb'
+
+        // our plugin
+        addFile 'libs/' + jar.archiveName.toString(), '/opt/kairosdb/lib'
+
+        // telnet and jetty
+        exposePort(4242, 8080)
+
+        entryPoint 'bash', '/opt/kairosdb/bin/wrapper.sh'
+    }
+
+    task dockerBuildImage(type: DockerBuildImage) {
+        dependsOn createDockerfile
+        group 'docker'
+        inputDir = project.buildDir
+        dockerFile = createDockerfile.destFile
+
+        tag = rootProject.dockerRepo + '/' + project.name + ':' + rootProject.ext.imageTag
+    }
+
+    task publish(type: DockerPushImage) {
+        description('push a tagged image to remote repository')
+        group 'docker'
+        dependsOn(dockerBuildImage)
+
+        imageName = rootProject.dockerRepo + '/' + project.name
+        tag = rootProject.ext.imageTag
+    }
+}
+
+configure([project(':docker-scylladb')]) {
+    apply plugin: 'com.bmuschko.docker-remote-api'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    task clean(type: Delete) {
+        delete buildDir
+    }
+
+    task copyResources(type: Copy) {
+        from "${projectDir}/src/main/resources"
+        into "${buildDir}/resources/main"
+    }
+
+    docker {
+        // TODO there may be a cleaner way to detect if we are in a minikube environment
+        if (System.env.DOCKER_HOST) {
+            url = System.env.DOCKER_HOST
+        }
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = file(System.env.DOCKER_CERT_PATH)
+        }
+
+        registryCredentials {
+            // TODO need to get this working
+            email = project.hasProperty('dockerHubEmail') ? project.property('dockerHubEmail') : null
+        }
+    }
+
+    task createDockerfile(type: Dockerfile) {
+        group 'docker'
+        dependsOn copyResources
+        destFile = project.file('build/docker/Dockerfile')
+        outputs.upToDateWhen { false }
+
+        from 'ubuntu:16.04'
+        maintainer 'Greg McNutt "gmcnutt@purestorage.com"'
+
+        runCommand 'apt-get update'
+        runCommand 'apt-get install -y wget dnsutils sysstat net-tools'
+        runCommand "wget -nv -O /etc/apt/sources.list.d/scylla-$scylladbVersion-xenial.list http://downloads.scylladb.com/deb/ubuntu/scylla-$scylladbVersion-xenial.list"
+        runCommand 'apt-get update'
+        runCommand 'apt-get install -y scylla-server scylla-jmx scylla-tools --force-yes'
+
+        addFile 'resources/main/files/start-scylla', '/'
+
+        // telnet and jetty
+        exposePort(10000, 9042, 9160, 9180, 7000, 7001)
+        volume '/var/lib/scylla'
+
+        entryPoint 'bash', '/start-scylla'
+    }
+
+    task dockerBuildImage(type: DockerBuildImage) {
+        dependsOn createDockerfile
+        group 'docker'
+        inputDir = project.buildDir
+        dockerFile = createDockerfile.destFile
+
+        tag = rootProject.dockerRepo + '/' + project.name + ':' + rootProject.ext.imageTag
+    }
+
+    task publish(type: DockerPushImage) {
+        description('push a tagged image to remote repository')
+        group 'docker'
+        dependsOn(dockerBuildImage)
+
+        imageName = rootProject.dockerRepo + '/' + project.name
+        tag = rootProject.ext.imageTag
+    }
+}
+
+release.dependsOn subprojects.publish

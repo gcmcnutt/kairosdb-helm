@@ -1,23 +1,60 @@
 apiVersion: v1
 kind: Service
 metadata:
+  # TODO figure out why the DNS isn't following the doc and we have to name override here!
+  # (hint: if we have the service name different from stateful set name, things aren't working)
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+  name: {{ template "kairosdb.fullname" . }}-app
+  labels:
+    app: {{ template "kairosdb.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.kairosdb.annotations }}
+  annotations:
+{{ toYaml .Values.kairosdb.annotations | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.kairosdb.service.type }}
+  ports:
+    - port: {{ .Values.kairosdb.service.externalPort }}
+      targetPort: {{ .Values.kairosdb.service.internalPort }}
+      protocol: TCP
+      name: {{ .Values.kairosdb.service.name }}
+  selector:
+    app: {{ template "kairosdb.name" . }}
+    release: {{ .Release.Name }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: {{ template "kairosdb.fullname" . }}
   labels:
     app: {{ template "kairosdb.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- if .Values.annotations }}
+{{- if .Values.scylladb.annotations }}
   annotations:
-{{ toYaml .Values.annotations | indent 4 }}
+{{ toYaml .Values.scylladb.annotations | indent 4 }}
 {{- end }}
 spec:
-  type: {{ .Values.service.type }}
+  clusterIP: None
   ports:
-    - port: {{ .Values.service.externalPort }}
-      targetPort: {{ .Values.service.internalPort }}
-      protocol: TCP
-      name: {{ .Values.service.name }}
+    - port: {{ .Values.scylladb.service.cqlNativePort }}
+      name: cql
+    - port: {{ .Values.scylladb.service.thriftPort }}
+      name: thrift
+    - port: {{ .Values.scylladb.service.internodePort }}
+      name: internode
+    - port: {{ .Values.scylladb.service.jmxPort }}
+      name: jmx
+    - port: {{ .Values.scylladb.service.scyllaRestPort }}
+      name: rest
+    - port: {{ .Values.scylladb.service.prometheusPort }}
+      name: prometheus
   selector:
     app: {{ template "kairosdb.name" . }}
     release: {{ .Release.Name }}
+

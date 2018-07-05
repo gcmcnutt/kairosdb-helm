@@ -5,17 +5,17 @@
 #    pullPolicy: Always
 BROKE
 
-replicaCount: 9
+replicaCount: 3
 
 datastoreReplicationFactor: 3
 
 resources:
   requests:
-    cpu: 4000m
-    memory: 8Gi
+    cpu: 1000m
+    memory: 1Gi
 
-annotations:
-  service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+#annotations:
+#  service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
 
 service:
   type: LoadBalancer
@@ -25,17 +25,18 @@ service:
 scylladb:
   config:
     overprovisioned: 0
-    cpu: 16
-    memory: 16G
+    cpu: 2
+    memory: 2G
     endpointSnitch: Ec2Snitch
 
-  replicaCount: 9
+  replicaCount: 6
 
   persistence:
-    size: 4Ti
-    storageClass: io1
+    size: 50Gi
+#    storageClass: io1
 
   resources:
     requests:
-      cpu: 16000m
-      memory: 16Gi
+      cpu: 2000m
+      memory: 2Gi
+
