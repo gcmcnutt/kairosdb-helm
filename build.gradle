@@ -21,7 +21,7 @@ apply plugin: 'ch.netzwerg.release'
 
 rootProject.ext {
     kairosdbVersion = '1.2.1-1'
-    scylladbVersion = '2.1'
+    scylladbVersion = '2.2'
 
     version = rootProject.release.versionFile
 

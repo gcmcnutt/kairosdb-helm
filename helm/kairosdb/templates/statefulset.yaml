@@ -145,8 +145,11 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: datadir
-      annotations:
     spec:
+      {{- if .Values.persistence.selector }}
+      selector:
+{{ toYaml .Values.persistence.selector | indent 8 }}
+      {{- end }}
       accessModes:
         - {{ .Values.persistence.accessMode | quote }}
       resources:
@@ -155,4 +158,5 @@ spec:
       {{- if .Values.persistence.storageClass }}
       storageClassName: {{ .Values.persistence.storageClass | quote }}
       {{- end }}
+
 {{- end }}

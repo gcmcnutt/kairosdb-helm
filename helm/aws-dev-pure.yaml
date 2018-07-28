@@ -3,7 +3,7 @@
 replicaCount: 3
 
 persistence:
-  size: 4Ti
+  size: 750Gi
   storageClass: pure
   selector:
     matchLabels:
@@ -12,14 +12,14 @@ persistence:
 scylladb:
   config:
     overprovisioned: 0
-    cpu: 4
-    memory: 4G
+    cpu: 3
+    memory: 3G
     endpointSnitch: Ec2Snitch
 
   resources:
     requests:
-      cpu: 4000m
-      memory: 4Gi
+      cpu: 3000m
+      memory: 3Gi
 
 kairosdb:
 
@@ -38,8 +38,8 @@ kairosdb:
 
   resources:
     requests:
-      cpu: 2000m
-      memory: 2Gi
+      cpu: 1000m
+      memory: 1Gi
 
 global:
   image:
