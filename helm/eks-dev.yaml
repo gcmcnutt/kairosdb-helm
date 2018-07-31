@@ -1,42 +1,43 @@
-# aws configuration
-#global:
-#  image:
-#    repositoryPrefix: XXX.dkr.ecr.us-west-2.amazonaws.com
-#    pullPolicy: Always
-BROKE
+# EKS configuration
 
 replicaCount: 3
 
-datastoreReplicationFactor: 3
-
-resources:
-  requests:
-    cpu: 1000m
-    memory: 1Gi
-
-#annotations:
-#  service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
-
-service:
-  type: LoadBalancer
-  externalPort: 80
-
+persistence:
+  size: 750Gi
+  storageClass: io1
 
 scylladb:
   config:
     overprovisioned: 0
-    cpu: 2
-    memory: 2G
+    cpu: 3
+    memory: 3G
     endpointSnitch: Ec2Snitch
-
-  replicaCount: 6
-
-  persistence:
-    size: 50Gi
-#    storageClass: io1
 
   resources:
     requests:
-      cpu: 2000m
-      memory: 2Gi
+      cpu: 3000m
+      memory: 3Gi
 
+kairosdb:
+
+  datastoreReplicationFactor: 3
+
+  queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
+  defaultTtl: "86400"
+  memoryQueueSize: "1000000"
+
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+
+  service:
+    type: LoadBalancer
+    externalPort: 80
+
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+
+global:
+  image:
+    pullPolicy: Always

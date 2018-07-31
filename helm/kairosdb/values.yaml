@@ -8,7 +8,7 @@ scylladb:
     repository: gcmcnutt/docker-scylladb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.5-SNAPSHOT
+    tag: gmcnutt-0.8.6-SNAPSHOT
 
   config:
     overprovisioned: 1
@@ -38,7 +38,7 @@ kairosdb:
     repository: gcmcnutt/docker-kairosdb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.5-SNAPSHOT
+    tag: gmcnutt-0.8.6-SNAPSHOT
 
 #    datastoreReplicationFactor: 1
 #
@@ -47,6 +47,8 @@ kairosdb:
 #    defaultTtl: "3024000"
 #    queueProcessor: org.kairosdb.core.queue.FileQueueProcessor
 #    queryThreads: 20
+
+  connectLocalDB: true
 
   service:
     name: kairosdb

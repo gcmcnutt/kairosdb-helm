@@ -15,8 +15,8 @@
 # sh test/python/write-test.sh 50 http://virulent-olm-kairosdb-app greg2 100 1000 50
 
 # sh test/python/write-test.sh 1 http://melting-mite-kairosdb-app greg1 4 100 50
-# sh test/python/write-test.sh 3 http://queenly-ibex-kairosdb-app greg3 100 1000 50
-# sh test/python/write-test.sh 3 http://foolish-antelope-kairosdb-app greg4 100 1000 50
+# sh test/python/write-test.sh 3 http://romping-wolf-kairosdb-app greg3 100 1000 50
+# sh test/python/write-test.sh 3 http://ignoble-owl-kairosdb-app greg4 100 1000 50
 
 JOBS=$1
 KAIROS=$2
@@ -28,7 +28,7 @@ VOLUMES=$6
 METRIC_WRITE_RATE=20000
 REAL_TTL_SEC=259200
 
-IMAGE=621123821552.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu16
+IMAGE=499918285206.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu16
 
 for i in $(seq 1 $JOBS)
 do

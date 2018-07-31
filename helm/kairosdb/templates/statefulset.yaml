@@ -125,9 +125,13 @@ spec:
           timeoutSeconds: {{ .Values.kairosdb.service.probeTimeoutSeconds }}
         env:
         - name: SEEDS
+{{- if .Values.kairosdb.seeds }}
+          value: {{ .Values.kairosdb.seeds }}
+{{- else }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+{{- end }}
         - name: REPLICATION_FACTOR
           value: {{ .Values.kairosdb.datastoreReplicationFactor | default "1" | quote }}
         - name: MEMORY_QUEUE_SIZE
@@ -138,6 +142,8 @@ spec:
           value: {{ .Values.kairosdb.queueProcessor | default "org.kairosdb.core.queue.FileQueueProcessor" }}
         - name: QUERY_THREADS
           value: {{ .Values.kairosdb.queryThreads | default "20" | quote }}
+        - name: CONNECT_LOCAL_DB
+          value: {{-  if .Values.kairosdb.connectLocalDB }}""{{- else }} "#"{{ end }}
         resources:
 {{ toYaml .Values.kairosdb.resources | indent 10 }}
 
