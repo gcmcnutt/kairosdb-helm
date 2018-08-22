@@ -1,0 +1,42 @@
+# EKS to yuga configuration
+
+replicaCount: 3
+
+#persistence:
+#  size: 750Gi
+#  storageClass: io1
+
+scylladb:
+  config:
+    overprovisioned: 0
+    cpu: 3
+    memory: 3G
+    endpointSnitch: Ec2Snitch
+
+  resources:
+    requests:
+      cpu: 3000m
+      memory: 3Gi
+
+kairosdb:
+
+  datastoreReplicationFactor: 3
+
+  queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
+  defaultTtl: "86400"
+  memoryQueueSize: "1000000"
+
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 1Gi
+
+  # override going to...
+  seeds: "172.31.0.4,172.31.0.15"
+  #seeds: "192.168.10.195,192.168.3.180,192.168.5.236"
+  #seeds: vpce-0e57905c4703182dd-0sv7z5wq.vpce-svc-0759366e593a370f2.us-west-2.vpce.amazonaws.com
+  connectLocalDB: false
+
+global:
+  image:
+    pullPolicy: Always

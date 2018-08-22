@@ -14,9 +14,9 @@ import logging
 import json
 import settings
 import requests
-import math
 import time
 import random
+from datetime import datetime
 
 class RateLimiter:
     def __init__(self, itemRate=5.0, refillInterval=1, maxFill=2.0):
@@ -56,12 +56,13 @@ call_count = 0
 icall_count = 0
 
 logger.info(
-    "start: base={} devices={} metrics={} volumes={} samples_per_hour={} ttl={} metric_read_rate={} endpoint={}".format(
+    "start: base={} devices={} metrics={} volumes={} hours={} metric_read_rate={} writers={} range={} endpoint={}".format(
         settings.METRIC_BASE,
         settings.DEVICES, settings.METRICS, settings.VOLUMES,
-        settings.SAMPLES_PER_HOUR,
-        settings.TTL,
+        settings.HOURS,
         settings.METRIC_READ_RATE,
+        settings.WRITERS,
+        settings.RANGE,
         settings.KAIROS))
 
 rateLimiter = RateLimiter(itemRate = settings.METRIC_READ_RATE)
@@ -75,22 +76,29 @@ for loop in xrange(settings.QUERIES):
     # generate a simple grouping query across the sample area
 
     # pick a device/metric
-    metric = '%s|%d' % (settings.METRIC_BASE, random.randint(0, settings.METRICS - 1))
+    if settings.WRITERS > 0:
+        metric_base = "{}-{}".format(settings.METRIC_BASE, random.randint(1, settings.WRITERS))
+    else:
+        metric_base = settings.METRIC_BASE
+
+    metric = '%s|%d' % (metric_base, random.randint(0, settings.METRICS - 1))
 
     # look
-    end_time = time.time() * 1000
-    base_time = end_time - (settings.TTL * 1000 * 3)
+    end_time = time.time()
+    base_time = end_time - (settings.HOURS * 3600)
 
     # pick a random volume
     rand_device = random.randint(0, settings.DEVICES - 1)
+    rand_sample = random.randint(int(base_time), int(end_time))
+    end_sample = rand_sample + settings.RANGE
 
-    query_params = "query: metric={} device={} start={}".format(metric, rand_device, base_time)
+    query_params = "metric={} device={} start={}".format(metric, rand_device, datetime.fromtimestamp(rand_sample).isoformat())
 
     # standard grouping
     # standard aggregators
     query = {
-        "start_absolute": base_time,
-        "end_absolute": end_time,
+        "start_absolute": rand_sample * 1000,
+        "end_absolute": end_sample * 1000,
         "metrics": [
             {
                 "name": metric,
