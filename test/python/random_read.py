@@ -152,7 +152,7 @@ for loop in xrange(settings.QUERIES):
         logger.info("loop={} query={} items_returned={}".format(loop, query_params, items_returned))
 
     except Exception:
-        logger.exception("query={}, response={}".format(query_params, '' if response is None else str(response.text)))
+        logger.exception("query={}, response={}".format(query_params, response))
         exceptions = exceptions + 1
 
     call_count = call_count + 1

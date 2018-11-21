@@ -1,0 +1,40 @@
+# rancher on OS configuration
+
+replicaCount: 6
+
+persistence:
+  size: 20Ti
+  storageClass: os1
+
+scylladb:
+  config:
+    overprovisioned: 0
+    cpu: 16
+    memory: 16G
+    endpointSnitch: SimpleSnitch
+
+  resources:
+    requests:
+      cpu: 16000m
+      memory: 16Gi
+
+kairosdb:
+
+  datastoreReplicationFactor: 3
+
+  queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
+  defaultTtl: "259200"
+  memoryQueueSize: "5000000"
+
+  service:
+    type: LoadBalancer
+    externalPort: 80
+
+  resources:
+    requests:
+      cpu: 8000m
+      memory: 8Gi
+
+global:
+  image:
+    pullPolicy: Always

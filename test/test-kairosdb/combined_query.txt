@@ -1,0 +1,34 @@
+{
+    "start_relative": {
+        "value": 1,
+        "unit": "days"
+    },
+    "metrics": [
+        {
+            "name": "combined.example",
+            "limit": 10,
+            "aggregators": [
+                {
+                    "name": "avg",
+                    "sampling": {
+                        "value": 1,
+                        "unit": "minutes"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "combined.example",
+            "limit": 10,
+            "aggregators": [
+                {
+                    "name": "max",
+                    "sampling": {
+                        "value": 1,
+                        "unit": "minutes"
+                    }
+                }
+            ]
+        }
+    ]
+}

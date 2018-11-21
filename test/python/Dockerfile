@@ -4,6 +4,7 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
 COPY bulk_write.py .
+COPY combined_bulk_write.py .
 COPY settings.py .
 COPY random_read.py .
 

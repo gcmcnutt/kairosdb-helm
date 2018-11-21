@@ -32,7 +32,7 @@ kairosdb:
       memory: 1Gi
 
   # override going to...
-  seeds: "172.31.0.4,172.31.0.15"
+  seeds: "172.31.0.15,172.31.0.14"
   #seeds: "192.168.10.195,192.168.3.180,192.168.5.236"
   #seeds: vpce-0e57905c4703182dd-0sv7z5wq.vpce-svc-0759366e593a370f2.us-west-2.vpce.amazonaws.com
   connectLocalDB: false

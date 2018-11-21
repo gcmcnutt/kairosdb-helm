@@ -1,0 +1,35 @@
+[{
+    "name": "float.example",
+    "timestamp": @@now@@000,
+    "type": "float",
+    "value": 123.456,
+    "tags":{"host":"test"}
+},
+{
+    "name": "combined.example",
+    "timestamp": @@now@@100,
+    "type": "combined",
+    "value": {
+        "br": 10.0,
+        "bw": 20.0,
+        "ir": 30.0,
+        "iw": 40.0,
+        "lr": 50.0,
+        "lw": 1.0
+    },
+    "tags":{"host":"test"}
+},
+{
+    "name": "combined.example",
+    "timestamp": @@now@@200,
+    "type": "combined",
+    "value": {
+        "br": 20.0,
+        "bw": 10.0,
+        "ir": 30.0,
+        "iw": 0.0,
+        "lr": 100.0,
+        "lw": 0.5
+    },
+    "tags":{"host":"test"}
+}]
