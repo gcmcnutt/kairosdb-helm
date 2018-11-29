@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 
+useLocalDB: true
+
 scylladb:
   image:
     repository: gcmcnutt/docker-scylladb
@@ -47,8 +49,6 @@ kairosdb:
 #    defaultTtl: "3024000"
 #    queueProcessor: org.kairosdb.core.queue.FileQueueProcessor
 #    queryThreads: 20
-
-  connectLocalDB: true
 
   service:
     name: kairosdb

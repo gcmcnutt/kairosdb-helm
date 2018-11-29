@@ -31,7 +31,7 @@ spec:
 #      cqlsh:kairosdb> alter table row_key_index with compaction = { 'class': 'LeveledCompactionStrategy'} AND gc_grace_seconds=3600;
 
       containers:
-{{- if .Values.kairosdb.connectLocalDB }}
+{{- if .Values.useLocalDB }}
       - name: scylladb
         image: {{ template "kairosdb.scyllaImageId" . }}
         imagePullPolicy: {{ .Values.global.image.pullPolicy }}
@@ -144,7 +144,7 @@ spec:
         - name: QUERY_THREADS
           value: {{ .Values.kairosdb.queryThreads | default "20" | quote }}
         - name: CONNECT_LOCAL_DB
-          value: {{  if .Values.kairosdb.connectLocalDB }}""{{ else }}"#"{{ end }}
+          value: {{  if .Values.useLocalDB }}""{{ else }}"#"{{ end }}
         resources:
 {{ toYaml .Values.kairosdb.resources | indent 10 }}
 

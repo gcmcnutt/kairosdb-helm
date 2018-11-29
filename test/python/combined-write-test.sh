@@ -2,7 +2,11 @@
 
 # usage
 
-# sh test/python/combined-write-test.sh 20 http://10.16.65.118 greg1 500 1000 10
+# sh test/python/combined-write-test.sh 20 http://10.16.65.116 greg1 500 1000 10
+# sh test/python/combined-write-test.sh 25 http://10.16.65.119 greg1 840 80 50
+# sh test/python/combined-write-test.sh 10 http://10.16.65.116 greg1 840 80 50
+
+# KAIROS=http://10.16.65.121 python combined_bulk_write.py
 
 JOBS=$1
 KAIROS=$2
@@ -13,6 +17,7 @@ VOLUMES=$6
 
 METRIC_WRITE_RATE=4000
 REAL_TTL_SEC=259200
+METRICS=3
 
 IMAGE=gcmcnutt/ktest:combined4
 
@@ -21,9 +26,8 @@ do
  run=$NAME-$i
  kubectl \
     --image $IMAGE \
-    --image-pull-policy=Always \
     --restart=Never \
     --labels=group=$NAME,agent=$i \
     --requests=cpu=100m,memory=50Mi \
-    run $run -- sh -c "KAIROS=$KAIROS METRIC_BASE=$run HOURS=$HOURS DEVICES=$DEVICES VOLUMES=$VOLUMES METRIC_WRITE_RATE=$METRIC_WRITE_RATE REAL_TTL_SEC=$REAL_TTL_SEC python combined_bulk_write.py"
+    run $run -- sh -c "KAIROS=$KAIROS METRIC_BASE=$run HOURS=$HOURS DEVICES=$DEVICES VOLUMES=$VOLUMES METRIC_WRITE_RATE=$METRIC_WRITE_RATE METRICS=$METRICS REAL_TTL_SEC=$REAL_TTL_SEC python combined_bulk_write.py"
 done

@@ -90,7 +90,7 @@ configure([project(':docker-kairosdb')]) {
         runCommand 'apt-mark hold cron'
 
         runCommand 'apt-get install -y wget dnsutils sysstat net-tools'
-        runCommand 'wget -qO /tmp/kairosdb-1.2.1-1.tar.gz https://github.com/gcmcnutt/kairosdb/releases/download/pstg-v1.2.1-1/kairosdb-1.2.1-1.tar.gz'
+        runCommand 'wget -qO /tmp/kairosdb-1.2.1-1.tar.gz https://github.com/gcmcnutt/kairosdb/releases/download/pstg-v1.2.1-1y/kairosdb-1.2.1-1.tar.gz'
         runCommand 'mkdir -p /opt/ && cd /opt/ && tar -xf /tmp/kairosdb*'
 
         addFile 'resources/main/files', '/opt/kairosdb'
