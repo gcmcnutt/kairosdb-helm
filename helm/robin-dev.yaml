@@ -1,22 +1,21 @@
-# rancher on OS configuration
 
 replicaCount: 6
 
 persistence:
-  size: 10Ti
-  storageClass: default
+  size: 100Gi
+  storageClass: robin
 
 scylladb:
   config:
     overprovisioned: 0
-    cpu: 8
-    memory: 8G
+    cpu: 4
+    memory: 4G
     endpointSnitch: SimpleSnitch
 
   resources:
     requests:
-      cpu: 8000m
-      memory: 8Gi
+      cpu: 4000m
+      memory: 4Gi
 
 kairosdb:
 
@@ -32,8 +31,8 @@ kairosdb:
 
   resources:
     requests:
-      cpu: 4000m
-      memory: 4Gi
+      cpu: 2000m
+      memory: 2Gi
 
 global:
   image:

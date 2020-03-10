@@ -69,10 +69,10 @@ configure([project(':docker-kairosdb')]) {
             certPath = file(System.env.DOCKER_CERT_PATH)
         }
 
-        registryCredentials {
-            // TODO need to get this working
-            email = project.hasProperty('dockerHubEmail') ? project.property('dockerHubEmail') : null
-        }
+//        registryCredentials {
+//            // TODO need to get this working
+//            email = project.hasProperty('dockerHubEmail') ? project.property('dockerHubEmail') : null
+//        }
     }
 
     task createDockerfile(type: Dockerfile) {
@@ -149,10 +149,10 @@ configure([project(':docker-scylladb')]) {
             certPath = file(System.env.DOCKER_CERT_PATH)
         }
 
-        registryCredentials {
-            // TODO need to get this working
-            email = project.hasProperty('dockerHubEmail') ? project.property('dockerHubEmail') : null
-        }
+//        registryCredentials {
+//            // TODO need to get this working
+//            email = project.hasProperty('dockerHubEmail') ? project.property('dockerHubEmail') : null
+//        }
     }
 
     task createDockerfile(type: Dockerfile) {

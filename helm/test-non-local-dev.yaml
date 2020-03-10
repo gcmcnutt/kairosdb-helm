@@ -16,16 +16,17 @@ kairosdb:
   memoryQueueSize: "5000000"
 
   service:
-    type: LoadBalancer
+    type: ClusterIP
     externalPort: 80
 
   resources:
     requests:
-      cpu: 8000m
-      memory: 8Gi
+      cpu: 4000m
+      memory: 4Gi
 
   # override going to...
-  seeds: "yb-tservers"
+#  seeds: "172.21.17.120,172.21.19.150,172.21.16.52"
+  seeds: "172.21.30.82,172.21.16.52,172.21.19.150"
 
 global:
   image:

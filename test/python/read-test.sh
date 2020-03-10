@@ -4,6 +4,8 @@
 # sh test/python/read-test.sh 2 http://nosy-cheetah-kairosdb-app greg6 200 100 50 20
 # sh test/python/read-test.sh 2 http://10.16.67.7 greg1 120 1000 50 12
 
+# sh test/python/read-test.sh 2 http://mortal-dragonfly-kairosdb-app greg1 100 100 50 10
+
 JOBS=$1
 KAIROS=$2
 NAME=$3
@@ -14,7 +16,7 @@ WRITERS=$7
 
 QUERIES=50000
 
-IMAGE=gcmcnutt/ktest:lyu19
+IMAGE=gcmcnutt/kairosdb-test:1
 
 for i in $(seq 1 $JOBS)
 do

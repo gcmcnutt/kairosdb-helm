@@ -23,6 +23,8 @@
 
 # sh test/python/write-test.sh 30 http://10.16.67.7 greg1 100 1000 50
 
+# sh test/python/write-test.sh 10 http://mortal-dragonfly-kairosdb-app greg1 100 100 50
+
 JOBS=$1
 KAIROS=$2
 NAME=$3
@@ -30,10 +32,10 @@ HOURS=$4
 DEVICES=$5
 VOLUMES=$6
 
-METRIC_WRITE_RATE=20000
+METRIC_WRITE_RATE=2000
 REAL_TTL_SEC=259200
 
-IMAGE=gcmcnutt/ktest:lyu16
+IMAGE=gcmcnutt/kairosdb-test:1
 
 for i in $(seq 1 $JOBS)
 do

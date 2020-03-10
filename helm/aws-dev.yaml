@@ -4,7 +4,7 @@ replicaCount: 3
 
 persistence:
   size: 750Gi
-  storageClass: io1
+  storageClass: io1-3
 
 scylladb:
   config:

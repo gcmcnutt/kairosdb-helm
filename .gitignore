@@ -1,9 +1,9 @@
 venv
 .DS_Store
-.gradle/*
-.idea/*
+.idea/
 /dist/
 *.iml
 .gradle
-*/build/*
+**/build/
+**/out/*
 *.pyc
