@@ -31,6 +31,7 @@ spec:
 #      cqlsh:kairosdb> alter table row_key_index with compaction = { 'class': 'LeveledCompactionStrategy'} AND gc_grace_seconds=3600;
 
       containers:
+{{- if .Values.useLocalDB }}
       - name: scylladb
         image: {{ template "kairosdb.scyllaImageId" . }}
         imagePullPolicy: {{ .Values.global.image.pullPolicy }}
@@ -105,7 +106,7 @@ spec:
           timeoutSeconds: {{ .Values.scylladb.service.probeTimeoutSeconds }}
         resources:
 {{ toYaml .Values.scylladb.resources | indent 10 }}
-
+{{- end }}
       - name: kairosdb
         image: {{ template "kairosdb.kairosImageId" . }}
         imagePullPolicy: {{ .Values.global.image.pullPolicy }}
@@ -125,9 +126,13 @@ spec:
           timeoutSeconds: {{ .Values.kairosdb.service.probeTimeoutSeconds }}
         env:
         - name: SEEDS
+{{- if .Values.kairosdb.seeds }}
+          value: {{ .Values.kairosdb.seeds }}
+{{- else }}
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+{{- end }}
         - name: REPLICATION_FACTOR
           value: {{ .Values.kairosdb.datastoreReplicationFactor | default "1" | quote }}
         - name: MEMORY_QUEUE_SIZE
@@ -138,6 +143,8 @@ spec:
           value: {{ .Values.kairosdb.queueProcessor | default "org.kairosdb.core.queue.FileQueueProcessor" }}
         - name: QUERY_THREADS
           value: {{ .Values.kairosdb.queryThreads | default "20" | quote }}
+        - name: CONNECT_LOCAL_DB
+          value: {{  if .Values.useLocalDB }}""{{ else }}"#"{{ end }}
         resources:
 {{ toYaml .Values.kairosdb.resources | indent 10 }}
 
@@ -145,8 +152,11 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: datadir
-      annotations:
     spec:
+      {{- if .Values.persistence.selector }}
+      selector:
+{{ toYaml .Values.persistence.selector | indent 8 }}
+      {{- end }}
       accessModes:
         - {{ .Values.persistence.accessMode | quote }}
       resources:
@@ -155,4 +165,5 @@ spec:
       {{- if .Values.persistence.storageClass }}
       storageClassName: {{ .Values.persistence.storageClass | quote }}
       {{- end }}
+
 {{- end }}

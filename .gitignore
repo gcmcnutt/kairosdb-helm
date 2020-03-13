@@ -4,5 +4,6 @@ venv
 /dist/
 *.iml
 .gradle
-*/build/*
+**/build/
+**/out/*
 *.pyc

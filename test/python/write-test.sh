@@ -14,8 +14,16 @@
 # sh test/python/write-test.sh 100 http://internal-a029bf3c5609f11e8a92c067563aff83-527735186.us-west-2.elb.amazonaws.com greg2 1000 1000 50
 # sh test/python/write-test.sh 50 http://virulent-olm-kairosdb-app greg2 100 1000 50
 
-# sh test/python/write-test.sh 1 http://melting-mite-kairosdb-app greg1 4 100 50
-# sh test/python/write-test.sh 10 http://brazen-ladybug-kairosdb-app greg3 40 1000 50
+# sh test/python/write-test.sh 10 http://torrid-zebra-kairosdb-app greg1 100 100 50
+# sh test/python/write-test.sh 20 http://nosy-cheetah-kairosdb-app greg6 200 100 50
+# sh test/python/write-test.sh 20 http://invited-buffalo-kairosdb-app greg6 200 100 50
+
+# sh test/python/write-test.sh 10 http://odd-seagull-kairosdb-app:8080 greg1 200 100 50
+# sh test/python/write-test.sh 20 http://10.16.65.108 greg1 500 1000 50
+
+# sh test/python/write-test.sh 30 http://10.16.67.7 greg1 100 1000 50
+
+# sh test/python/write-test.sh 10 http://mortal-dragonfly-kairosdb-app greg1 100 100 50
 
 JOBS=$1
 KAIROS=$2
@@ -24,10 +32,10 @@ HOURS=$4
 DEVICES=$5
 VOLUMES=$6
 
-METRIC_WRITE_RATE=20000
+METRIC_WRITE_RATE=2000
 REAL_TTL_SEC=259200
 
-IMAGE=473933976095.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu16
+IMAGE=gcmcnutt/kairosdb-test:1
 
 for i in $(seq 1 $JOBS)
 do

@@ -1,17 +1,16 @@
-# aws configuration
 
-replicaCount: 3
+replicaCount: 6
 
 persistence:
-  size: 4Ti
-  storageClass: pure
+  size: 100Gi
+  storageClass: robin
 
 scylladb:
   config:
     overprovisioned: 0
     cpu: 4
     memory: 4G
-    endpointSnitch: Ec2Snitch
+    endpointSnitch: SimpleSnitch
 
   resources:
     requests:
@@ -23,11 +22,8 @@ kairosdb:
   datastoreReplicationFactor: 3
 
   queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
-  defaultTtl: "86400"
-  memoryQueueSize: "1000000"
-
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+  defaultTtl: "259200"
+  memoryQueueSize: "5000000"
 
   service:
     type: LoadBalancer

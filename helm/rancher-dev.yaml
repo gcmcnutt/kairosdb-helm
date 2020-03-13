@@ -1,22 +1,22 @@
-# aws large benchmark configuration
+# rancher on OS configuration
 
-replicaCount: 9
+replicaCount: 6
 
 persistence:
-  size: 3Ti
-  storageClass: io1
+  size: 10Ti
+  storageClass: default
 
 scylladb:
   config:
     overprovisioned: 0
-    cpu: 16
-    memory: 16G
-    endpointSnitch: Ec2Snitch
+    cpu: 8
+    memory: 8G
+    endpointSnitch: SimpleSnitch
 
   resources:
     requests:
-      cpu: 16000m
-      memory: 16Gi
+      cpu: 8000m
+      memory: 8Gi
 
 kairosdb:
 
@@ -24,10 +24,7 @@ kairosdb:
 
   queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
   defaultTtl: "259200"
-  memoryQueueSize: "100000000"
-
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-internal: '0.0.0.0/0'
+  memoryQueueSize: "5000000"
 
   service:
     type: LoadBalancer
@@ -36,7 +33,7 @@ kairosdb:
   resources:
     requests:
       cpu: 4000m
-      memory: 8Gi
+      memory: 4Gi
 
 global:
   image:

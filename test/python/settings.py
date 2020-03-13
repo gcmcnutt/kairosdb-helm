@@ -19,4 +19,5 @@ REPORT_INTERVAL = 15
 # read values
 METRIC_READ_RATE = float(os.getenv('METRIC_READ_RATE', '1.0'))
 QUERIES = int(os.getenv('QUERIES', '1000'))
-TTL = int(os.getenv('TTL', '86400'))
+RANGE = int(os.getenv('RANGE', '86400'))
+WRITERS = int(os.getenv('WRITERS', 0))

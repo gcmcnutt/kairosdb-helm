@@ -3,12 +3,14 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 
+useLocalDB: true
+
 scylladb:
   image:
     repository: gcmcnutt/docker-scylladb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.4-SNAPSHOT
+    tag: gmcnutt-0.9.3-SNAPSHOT
 
   config:
     overprovisioned: 1
@@ -38,7 +40,7 @@ kairosdb:
     repository: gcmcnutt/docker-kairosdb
 
     # TODO this should be provided by, say, gradle driver
-    tag: gmcnutt-0.8.4-SNAPSHOT
+    tag: gmcnutt-0.9.3-SNAPSHOT
 
 #    datastoreReplicationFactor: 1
 #

@@ -33,7 +33,7 @@ scylladb:
 
   persistence:
     size: 4Ti
-    storageClass: io1
+    storageClass: io1-3
 
   resources:
     requests:

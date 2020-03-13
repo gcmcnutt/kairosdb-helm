@@ -1,29 +1,30 @@
 #!/usr/bin/env bash
 
 # usage
-# sh test/python/read-test.sh 1 http://rousing-mole-kairosdb-app greg2 86400 1000 50
-# sh test/python/read-test.sh 10 http://brazen-ladybug-kairosdb-app greg3 86400 1000 50
+# sh test/python/read-test.sh 2 http://nosy-cheetah-kairosdb-app greg6 200 100 50 20
+# sh test/python/read-test.sh 2 http://10.16.67.7 greg1 120 1000 50 12
+
+# sh test/python/read-test.sh 2 http://mortal-dragonfly-kairosdb-app greg1 100 100 50 10
 
 JOBS=$1
 KAIROS=$2
 NAME=$3
-TTL=$4
+HOURS=$4
 DEVICES=$5
 VOLUMES=$6
+WRITERS=$7
 
 QUERIES=50000
 
-IMAGE=473933976095.dkr.ecr.us-west-2.amazonaws.com/gmcnutt:lyu17
-CONTEXT=gmcnutt3.pstg-prd.net
+IMAGE=gcmcnutt/kairosdb-test:1
 
 for i in $(seq 1 $JOBS)
 do
- run=$NAME-$i
- kubectl --context $CONTEXT \
+ kubectl \
     --image $IMAGE \
     --image-pull-policy=Always \
     --restart=Never \
     --labels=group=$NAME-r,agent=$i \
     --requests=cpu=100m,memory=50Mi \
-    run $run-r -- sh -c "KAIROS=$KAIROS QUERIES=$QUERIES METRIC_BASE=$run TTL=$TTL DEVICES=$DEVICES VOLUMES=$VOLUMES python random_read.py"
+    run $NAME-$i-r -- sh -c "KAIROS=$KAIROS WRITERS=$WRITERS QUERIES=$QUERIES METRIC_BASE=$NAME HOURS=$HOURS DEVICES=$DEVICES VOLUMES=$VOLUMES python random_read.py"
 done

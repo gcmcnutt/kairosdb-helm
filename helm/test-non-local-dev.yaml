@@ -1,0 +1,33 @@
+# rancher-kairos to yuga configuration
+
+replicaCount: 6
+
+useLocalDB: false
+
+
+kairosdb:
+  image:
+    tag: gmcnutt-0.9.2y-SNAPSHOT
+
+  datastoreReplicationFactor: 3
+
+  queueProcessor: org.kairosdb.core.queue.MemoryQueueProcessor
+  defaultTtl: "259200"
+  memoryQueueSize: "5000000"
+
+  service:
+    type: ClusterIP
+    externalPort: 80
+
+  resources:
+    requests:
+      cpu: 4000m
+      memory: 4Gi
+
+  # override going to...
+#  seeds: "172.21.17.120,172.21.19.150,172.21.16.52"
+  seeds: "172.21.30.82,172.21.16.52,172.21.19.150"
+
+global:
+  image:
+    pullPolicy: Always
